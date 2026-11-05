@@ -17,3 +17,4 @@ function auth(req,res,next) {
   catch { res.status(401).json({ error:'Please sign in again.' }); }
 }
 const roles = (...allowed) => (req,res,next) => allowed.includes(req.user.role) ? next() : res.status(403).json({error:'Not allowed.'});
+const notify = (userId,title,body) => db.prepare('INSERT INTO notifications(user_id,title,body) VALUES(?,?,?)').run(userId,title,body);
