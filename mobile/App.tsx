@@ -1,0 +1,11 @@
+import React,{useEffect,useState} from 'react';
+import {Alert, ActivityIndicator, FlatList, Image, KeyboardAvoidingView, Modal, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View} from 'react-native';
+import MapView,{Marker} from 'react-native-maps';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as ImagePicker from 'expo-image-picker';
+import * as Location from 'expo-location';
+import * as Notifications from 'expo-notifications';
+import {StatusBar} from 'expo-status-bar';
+import {api,setToken} from './src/api';
+import {C} from './src/theme';
+import type {User,Property,Booking,Notice,Role} from './src/types';
