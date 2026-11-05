@@ -45,4 +45,9 @@ export default function App(){
   try{const r=await api<{token:string,user:User}>('/auth/login',{method:'POST',body:JSON.stringify({email,password})});await saveSession(r.token,r.user);}
   catch(e:any){Alert.alert('Sign in failed',e.message);}
  }
+
+ async function signUp(){
+  try{const r=await api<{token:string,user:User}>('/auth/register',{method:'POST',body:JSON.stringify({name,email,password,phone,role})});await saveSession(r.token,r.user);}
+  catch(e:any){Alert.alert('Registration failed',e.message);}
+ }
 }
