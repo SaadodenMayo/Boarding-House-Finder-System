@@ -27,3 +27,16 @@ SELECT p.*, u.name owner_name,
 FROM properties p JOIN users u ON u.id=p.owner_id`;
 
 app.get('/api/health',(req,res)=>res.json({ok:true,service:'Dorm Finder API'}));
+app.post('/api/auth/register',(req,res)=>{
+  const {name,email,password,phone,role}=req.body || {};
+  if(!name || !email || !password || !['owner','student'].includes(role))
+    return res.status(400).json({error:'Name, email, password and a valid role are required.'});
+  if(String(password).length<8) return res.status(400).json({error:'Password must be at least 8 characters.'});
+  try {
+    const info=db.prepare('INSERT INTO users(name,email,phone,password_hash,role) VALUES(?,?,?,?,?)')
+      .run(String(name).trim(),String(email).toLowerCase().trim(),phone||'',bcrypt.hashSync(password,10),role);
+    const user=db.prepare('SELECT id,name,email,phone,role FROM users WHERE id=?').get(info.lastInsertRowid);
+    const token=jwt.sign({id:user.id,role:user.role},SECRET,{expiresIn:'7d'});
+    res.status(201).json({token,user});
+  } catch(e) { res.status(409).json({error:'That email address is already registered.'}); }
+});
