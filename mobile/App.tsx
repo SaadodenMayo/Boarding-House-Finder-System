@@ -18,6 +18,9 @@ const Header=({title,sub}:{title:string,sub?:string})=><View style={{marginBotto
 const Card=({children}:{children:React.ReactNode})=><View style={s.card}>{children}</View>;
 
 export default function App(){
-    const [user,setUser]=useState<User|null>(null),[token,setTok]=useState<string|null>(null),[loading,setLoading]=useState(true);
-    const [tab,setTab]=useState('Home'),[authMode,setAuthMode]=useState<'login'|'register'>('login');
+ const [user,setUser]=useState<User|null>(null),[token,setTok]=useState<string|null>(null),[loading,setLoading]=useState(true);
+ const [tab,setTab]=useState('Home'),[authMode,setAuthMode]=useState<'login'|'register'>('login');
+ const [email,setEmail]=useState(''),[password,setPassword]=useState(''),[name,setName]=useState(''),[phone,setPhone]=useState(''),[role,setRole]=useState<Role>('student');
+ const [properties,setProperties]=useState<Property[]>([]),[mine,setMine]=useState<Property[]>([]),[pending,setPending]=useState<Property[]>([]);
+ const [bookings,setBookings]=useState<Booking[]>([]),[notices,setNotices]=useState<Notice[]>([]);
 }
