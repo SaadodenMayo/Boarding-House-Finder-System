@@ -57,4 +57,12 @@ export default function App(){
   const result=await ImagePicker.launchImageLibraryAsync({mediaTypes:['images'],quality:.55,base64:true,allowsEditing:true,aspect:[4,3]});
   if(!result.canceled&&result.assets[0].base64)setPhoto(`data:image/jpeg;base64,${result.assets[0].base64}`);
  }
+ async function pinCurrentLocation(){
+  try{const perm=await Location.requestForegroundPermissionsAsync();if(!perm.granted)throw new Error('Location permission was not granted.');const loc=await Location.getCurrentPositionAsync({});setForm({...form,latitude:String(loc.coords.latitude),longitude:String(loc.coords.longitude)});}
+  catch(e:any){Alert.alert('Location unavailable',e.message);}
+ }
+ async function submitProperty(){
+  try{await api('/properties',{method:'POST',body:JSON.stringify({...form,latitude:Number(form.latitude),longitude:Number(form.longitude),monthly_price:Number(form.monthly_price),total_rooms:Number(form.total_rooms),image_data:photo})});setModal('none');setPhoto(null);Alert.alert('Submitted','Your property is waiting for admin approval.');refresh();}
+  catch(e:any){Alert.alert('Submission failed',e.message);}
+ }
 }
