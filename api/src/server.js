@@ -84,3 +84,8 @@ app.get('/api/properties/mine',auth,roles('owner'),(req,res)=>{
 app.get('/api/properties/pending',auth,roles('admin'),(req,res)=>{
  res.json({properties:db.prepare(propertySelect+" WHERE p.status='pending' ORDER BY p.created_at").all()});
 });
+app.get('/api/properties/:id',(req,res)=>{
+ const p=db.prepare(propertySelect+' WHERE p.id=?').get(Number(req.params.id));
+ if(!p || (p.status!=='approved' && (!req.user || req.user.role!=='admin'))) return res.status(404).json({error:'Property not found.'});
+ res.json({property:p,reviews:db.prepare(`SELECT r.*,u.name student_name FROM reviews r JOIN users u ON u.id=r.student_id WHERE r.property_id=? ORDER BY r.created_at DESC`).all(p.id)});
+});
