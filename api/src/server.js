@@ -25,3 +25,5 @@ SELECT p.*, u.name owner_name,
  COALESCE((SELECT ROUND(AVG(r.rating),1) FROM reviews r WHERE r.property_id=p.id),0) average_rating,
  (SELECT COUNT(*) FROM reviews r WHERE r.property_id=p.id) review_count
 FROM properties p JOIN users u ON u.id=p.owner_id`;
+
+app.get('/api/health',(req,res)=>res.json({ok:true,service:'Dorm Finder API'}));
