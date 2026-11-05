@@ -81,3 +81,6 @@ app.get('/api/properties',(req,res)=>{
 app.get('/api/properties/mine',auth,roles('owner'),(req,res)=>{
  res.json({properties:db.prepare(propertySelect+' WHERE p.owner_id=? ORDER BY p.created_at DESC').all(req.user.id)});
 });
+app.get('/api/properties/pending',auth,roles('admin'),(req,res)=>{
+ res.json({properties:db.prepare(propertySelect+" WHERE p.status='pending' ORDER BY p.created_at").all()});
+});
