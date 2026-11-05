@@ -52,4 +52,9 @@ export default function App(){
  }
  async function saveSession(t:string,u:User){setTok(t);setToken(t);setUser(u);setTab('Home');await AsyncStorage.setItem('session',JSON.stringify({token:t,user:u}));setProfileName(u.name);setProfilePhone(u.phone||'');}
  async function logout(){await AsyncStorage.removeItem('session');setToken(null);setTok(null);setUser(null);setSelected(null);}
+ async function pickPhoto(){
+  const permission=await ImagePicker.requestMediaLibraryPermissionsAsync();if(!permission.granted){Alert.alert('Permission needed','Allow photo library access to add property photos.');return;}
+  const result=await ImagePicker.launchImageLibraryAsync({mediaTypes:['images'],quality:.55,base64:true,allowsEditing:true,aspect:[4,3]});
+  if(!result.canceled&&result.assets[0].base64)setPhoto(`data:image/jpeg;base64,${result.assets[0].base64}`);
+ }
 }
