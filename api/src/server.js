@@ -78,3 +78,6 @@ app.get('/api/properties',(req,res)=>{
  sql+=' ORDER BY p.created_at DESC';
  res.json({properties:db.prepare(sql).all(...args).map(publicProperty)});
 });
+app.get('/api/properties/mine',auth,roles('owner'),(req,res)=>{
+ res.json({properties:db.prepare(propertySelect+' WHERE p.owner_id=? ORDER BY p.created_at DESC').all(req.user.id)});
+});
