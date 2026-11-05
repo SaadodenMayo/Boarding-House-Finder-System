@@ -51,3 +51,9 @@ app.get('/api/me',auth,(req,res)=>{
  const user=db.prepare('SELECT id,name,email,phone,role,created_at FROM users WHERE id=?').get(req.user.id);
  res.json({user});
 });
+app.patch('/api/me',auth,(req,res)=>{
+ const {name,phone}=req.body||{};
+ if(!name?.trim()) return res.status(400).json({error:'Name is required.'});
+ db.prepare('UPDATE users SET name=?,phone=? WHERE id=?').run(name.trim(),phone||'',req.user.id);
+ res.json({user:db.prepare('SELECT id,name,email,phone,role FROM users WHERE id=?').get(req.user.id)});
+});
