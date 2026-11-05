@@ -113,3 +113,6 @@ app.post('/api/properties/:id/favorite',auth,roles('student'),(req,res)=>{
  else db.prepare('INSERT OR IGNORE INTO favorites(student_id,property_id) VALUES(?,?)').run(req.user.id,id);
  res.json({favorite:!exists});
 });
+app.get('/api/favorites',auth,roles('student'),(req,res)=>{
+ res.json({properties:db.prepare(propertySelect+' JOIN favorites f ON f.property_id=p.id WHERE f.student_id=?').all(req.user.id)});
+});
