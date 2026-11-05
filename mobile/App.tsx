@@ -16,3 +16,8 @@ const Btn=({title,onPress,kind='primary',disabled=false}:{title:string,onPress:(
 const Field=({label,value,onChangeText,placeholder,keyboardType,multiline=false,secureTextEntry=false}:{label:string,value:string,onChangeText:(v:string)=>void,placeholder?:string,keyboardType?:any,multiline?:boolean,secureTextEntry?:boolean})=><View style={s.field}><Text style={s.label}>{label}</Text><TextInput value={value} onChangeText={onChangeText} placeholder={placeholder||label} placeholderTextColor={C.muted} keyboardType={keyboardType} multiline={multiline} secureTextEntry={secureTextEntry} style={[s.input,multiline&&{height:92,textAlignVertical:'top'}]}/></View>;
 const Header=({title,sub}:{title:string,sub?:string})=><View style={{marginBottom:18}}><Text style={s.heading}>{title}</Text>{!!sub&&<Text style={s.sub}>{sub}</Text>}</View>;
 const Card=({children}:{children:React.ReactNode})=><View style={s.card}>{children}</View>;
+
+export default function App(){
+    const [user,setUser]=useState<User|null>(null),[token,setTok]=useState<string|null>(null),[loading,setLoading]=useState(true);
+    const [tab,setTab]=useState('Home'),[authMode,setAuthMode]=useState<'login'|'register'>('login');
+}
