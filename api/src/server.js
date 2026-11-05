@@ -155,3 +155,16 @@ app.patch('/api/bookings/:id/cancel',auth,roles('student'),(req,res)=>{
  });
  tx(); res.json({ok:true});
 });
+app.post('/api/reviews',auth,roles('student'),(req,res)=>{
+ const {booking_id,rating,comment}=req.body||{};
+ const b=db.prepare("SELECT * FROM bookings WHERE id=? AND student_id=? AND status='confirmed'").get(Number(booking_id),req.user.id);
+ if(!b) return res.status(400).json({error:'Only confirmed rentals can be reviewed.'});
+ const age=Date.now()-new Date(b.confirmed_at).getTime();
+ if(age<7*24*60*60*1000) return res.status(400).json({error:'Ratings become available seven days after confirmation.'});
+ try {
+  db.prepare('INSERT INTO reviews(property_id,booking_id,student_id,rating,comment) VALUES(?,?,?,?,?)').run(b.property_id,b.id,req.user.id,Number(rating),comment||'');
+  const owner=db.prepare('SELECT owner_id,title FROM properties WHERE id=?').get(b.property_id);
+  notify(owner.owner_id,'New property rating',`A tenant rated ${owner.title}.`);
+  res.status(201).json({ok:true});
+ } catch { res.status(409).json({error:'This booking has already been rated.'}); }
+});
