@@ -31,4 +31,12 @@ export default function App(){
  const [modal,setModal]=useState<'none'|'add'|'book'|'review'|'profile'>('none');
  useEffect(()=>{(async()=>{try{const raw=await AsyncStorage.getItem('session');if(raw){const v=JSON.parse(raw);setTok(v.token);setToken(v.token);setUser(v.user);}}catch{}finally{setLoading(false);}})();},[]);
  useEffect(()=>{if(user){refresh();if(user.role==='student')checkReminders();}},[user,tab]);
+
+ async function refresh(){
+  try{
+   if(user?.role==='student'){const [p,b,n]=await Promise.all([api<{properties:Property[]}>('/properties'),api<{bookings:Booking[]}>('/bookings/mine'),api<{notifications:Notice[]}>('/notifications')]);setProperties(p.properties);setBookings(b.bookings);setNotices(n.notifications);}
+   if(user?.role==='owner'){const [p,b,n]=await Promise.all([api<{properties:Property[]}>('/properties/mine'),api<{bookings:Booking[]}>('/bookings/mine'),api<{notifications:Notice[]}>('/notifications')]);setMine(p.properties);setBookings(b.bookings);setNotices(n.notifications);}
+   if(user?.role==='admin'){const [p,n]=await Promise.all([api<{properties:Property[]}>('/properties/pending'),api<{notifications:Notice[]}>('/notifications')]);setPending(p.properties);setNotices(n.notifications);}
+  }catch(e:any){Alert.alert('Unable to refresh',e.message);}
+ }
 }
