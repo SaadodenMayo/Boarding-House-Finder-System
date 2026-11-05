@@ -57,3 +57,13 @@ app.patch('/api/me',auth,(req,res)=>{
  db.prepare('UPDATE users SET name=?,phone=? WHERE id=?').run(name.trim(),phone||'',req.user.id);
  res.json({user:db.prepare('SELECT id,name,email,phone,role FROM users WHERE id=?').get(req.user.id)});
 });
+app.post('/api/properties',auth,roles('owner'),(req,res)=>{
+ const b=req.body||{};
+ if(!b.title||!b.type||!b.description||!b.address||!Number.isFinite(Number(b.latitude))||!Number.isFinite(Number(b.longitude))||!b.contact_phone||Number(b.monthly_price)<=0||Number(b.total_rooms)<1)
+  return res.status(400).json({error:'Complete all required property details and location.'});
+ const total=Math.floor(Number(b.total_rooms));
+ const info=db.prepare(`INSERT INTO properties(owner_id,title,type,description,address,latitude,longitude,contact_phone,monthly_price,total_rooms,available_rooms,image_data,status)
+ VALUES(?,?,?,?,?,?,?,?,?,?,?,?, 'pending')`).run(req.user.id,b.title,b.type,b.description,b.address,Number(b.latitude),Number(b.longitude),b.contact_phone,Number(b.monthly_price),total,total,b.image_data||null);
+ notify(1,'New property submission',`A property named "${b.title}" is waiting for approval.`);
+ res.status(201).json({property:db.prepare(propertySelect+' WHERE p.id=?').get(info.lastInsertRowid)});
+});
