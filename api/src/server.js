@@ -47,3 +47,7 @@ app.post('/api/auth/login',(req,res)=>{
   const safe={id:user.id,name:user.name,email:user.email,phone:user.phone,role:user.role};
   res.json({token:jwt.sign({id:user.id,role:user.role},SECRET,{expiresIn:'7d'}),user:safe});
 });
+app.get('/api/me',auth,(req,res)=>{
+ const user=db.prepare('SELECT id,name,email,phone,role,created_at FROM users WHERE id=?').get(req.user.id);
+ res.json({user});
+});
