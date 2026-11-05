@@ -168,3 +168,6 @@ app.post('/api/reviews',auth,roles('student'),(req,res)=>{
   res.status(201).json({ok:true});
  } catch { res.status(409).json({error:'This booking has already been rated.'}); }
 });
+app.get('/api/notifications',auth,(req,res)=>{
+ res.json({notifications:db.prepare('SELECT * FROM notifications WHERE user_id=? ORDER BY created_at DESC LIMIT 100').all(req.user.id)});
+});
