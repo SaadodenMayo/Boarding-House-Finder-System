@@ -182,3 +182,13 @@ app.get('/api/admin/summary',auth,roles('admin'),(req,res)=>{
   bookings:db.prepare('SELECT status,COUNT(*) count FROM bookings GROUP BY status').all()
  });
 });
+app.get('/api/reminders/check',auth,roles('student'),(req,res)=>{
+ const eligible=db.prepare(`SELECT b.id,p.title FROM bookings b JOIN properties p ON p.id=b.property_id
+ WHERE b.student_id=? AND b.status='confirmed' AND b.confirmed_at<=datetime('now','-7 days')
+ AND NOT EXISTS(SELECT 1 FROM reviews r WHERE r.booking_id=b.id)`).all(req.user.id);
+ for(const b of eligible){
+  const already=db.prepare("SELECT 1 FROM notifications WHERE user_id=? AND title='Rate your rental' AND body LIKE ?").get(req.user.id,`%booking #${b.id}%`);
+  if(!already) notify(req.user.id,'Rate your rental',`It has been one week. Share your experience at ${b.title} (booking #${b.id}).`);
+ }
+ res.json({remindersCreated:eligible.length});
+});
