@@ -116,3 +116,13 @@ app.post('/api/properties/:id/favorite',auth,roles('student'),(req,res)=>{
 app.get('/api/favorites',auth,roles('student'),(req,res)=>{
  res.json({properties:db.prepare(propertySelect+' JOIN favorites f ON f.property_id=p.id WHERE f.student_id=?').all(req.user.id)});
 });
+app.post('/api/bookings',auth,roles('student'),(req,res)=>{
+ const {property_id,rooms=1,move_in_date,message}=req.body||{};
+ const p=db.prepare("SELECT * FROM properties WHERE id=? AND status='approved'").get(Number(property_id));
+ const n=Number(rooms);
+ if(!p||!Number.isInteger(n)||n<1||!move_in_date) return res.status(400).json({error:'Choose a valid property, room quantity and move-in date.'});
+ if(p.available_rooms<n) return res.status(409).json({error:'Not enough rooms are currently available.'});
+ const info=db.prepare('INSERT INTO bookings(property_id,student_id,rooms,move_in_date,message) VALUES(?,?,?,?,?)').run(p.id,req.user.id,n,move_in_date,message||'');
+ notify(p.owner_id,'New booking request',`A student requested ${n} room(s) at ${p.title}.`);
+ res.status(201).json({booking:db.prepare('SELECT * FROM bookings WHERE id=?').get(info.lastInsertRowid)});
+});
