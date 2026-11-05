@@ -192,3 +192,5 @@ app.get('/api/reminders/check',auth,roles('student'),(req,res)=>{
  }
  res.json({remindersCreated:eligible.length});
 });
+
+app.listen(PORT,'0.0.0.0',()=>console.log(`Dorm Finder API running at http://localhost:${PORT}`));
