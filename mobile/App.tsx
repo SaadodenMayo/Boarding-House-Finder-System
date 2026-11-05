@@ -23,4 +23,6 @@ export default function App(){
  const [email,setEmail]=useState(''),[password,setPassword]=useState(''),[name,setName]=useState(''),[phone,setPhone]=useState(''),[role,setRole]=useState<Role>('student');
  const [properties,setProperties]=useState<Property[]>([]),[mine,setMine]=useState<Property[]>([]),[pending,setPending]=useState<Property[]>([]);
  const [bookings,setBookings]=useState<Booking[]>([]),[notices,setNotices]=useState<Notice[]>([]);
+ const [selected,setSelected]=useState<Property|null>(null),[query,setQuery]=useState(''),[filter,setFilter]=useState('All');
+ const [photo,setPhoto]=useState<string|null>(null),[form,setForm]=useState<any>({title:'',type:'Boarding House',description:'',address:'',latitude:'10.283',longitude:'125.170',contact_phone:'',monthly_price:'',total_rooms:'1'});
 }
