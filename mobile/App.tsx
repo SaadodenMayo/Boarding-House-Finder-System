@@ -9,3 +9,5 @@ import {StatusBar} from 'expo-status-bar';
 import {api,setToken} from './src/api';
 import {C} from './src/theme';
 import type {User,Property,Booking,Notice,Role} from './src/types';
+
+Notifications.setNotificationHandler({handleNotification:async()=>({shouldShowAlert:true,shouldPlaySound:true,shouldSetBadge:false,shouldShowBanner:true,shouldShowList:true})});
