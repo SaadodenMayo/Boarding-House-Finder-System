@@ -50,4 +50,6 @@ export default function App(){
   try{const r=await api<{token:string,user:User}>('/auth/register',{method:'POST',body:JSON.stringify({name,email,password,phone,role})});await saveSession(r.token,r.user);}
   catch(e:any){Alert.alert('Registration failed',e.message);}
  }
+ async function saveSession(t:string,u:User){setTok(t);setToken(t);setUser(u);setTab('Home');await AsyncStorage.setItem('session',JSON.stringify({token:t,user:u}));setProfileName(u.name);setProfilePhone(u.phone||'');}
+ async function logout(){await AsyncStorage.removeItem('session');setToken(null);setTok(null);setUser(null);setSelected(null);}
 }
