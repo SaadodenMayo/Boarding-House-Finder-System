@@ -106,3 +106,6 @@ export default function App(){
  </ScrollView></KeyboardAvoidingView></Modal>
  </View>;
 }
+
+function PropertyCard({p,onPress}:{p:Property,onPress:()=>void}){return <Pressable onPress={onPress} style={s.propertyCard}>{p.image_data?<Image source={{uri:p.image_data}} style={s.propertyImage}/>:<View style={s.imagePlaceholder}><Text style={{fontSize:32}}>⌂</Text></View>}<View style={{padding:14}}><Text style={s.cardTitle}>{p.title}</Text><Text style={s.sub}>{p.type} · {p.address}</Text><View style={[s.row,{justifyContent:'space-between',alignItems:'center'}]}><Text style={s.price}>{money(p.monthly_price)}</Text><Text style={s.rating}>★ {p.average_rating||'New'} · {p.available_rooms} rooms left</Text></View></View></Pressable>}
+function Stat({label,value}:{label:string,value:number}){return <View style={s.stat}><Text style={s.statValue}>{value}</Text><Text style={s.sub}>{label}</Text></View>}
