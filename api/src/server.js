@@ -98,3 +98,11 @@ app.patch('/api/properties/:id/decision',auth,roles('admin'),(req,res)=>{
  notify(p.owner_id,decision==='approved'?'Property approved':'Property needs changes',decision==='approved'?`${p.title} is now visible to students.`:`${p.title}: ${reason||'Please review your submission.'}`);
  res.json({ok:true});
 });
+app.patch('/api/properties/:id/rooms',auth,roles('owner'),(req,res)=>{
+ const p=db.prepare('SELECT * FROM properties WHERE id=? AND owner_id=?').get(Number(req.params.id),req.user.id);
+ const count=Number(req.body.available_rooms);
+ if(!p) return res.status(404).json({error:'Property not found.'});
+ if(!Number.isInteger(count)||count<0||count>p.total_rooms) return res.status(400).json({error:'Available rooms must be between zero and total rooms.'});
+ db.prepare('UPDATE properties SET available_rooms=? WHERE id=?').run(count,p.id);
+ res.json({ok:true,available_rooms:count});
+});
