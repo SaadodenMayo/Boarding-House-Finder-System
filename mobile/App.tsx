@@ -65,4 +65,12 @@ export default function App(){
   try{await api('/properties',{method:'POST',body:JSON.stringify({...form,latitude:Number(form.latitude),longitude:Number(form.longitude),monthly_price:Number(form.monthly_price),total_rooms:Number(form.total_rooms),image_data:photo})});setModal('none');setPhoto(null);Alert.alert('Submitted','Your property is waiting for admin approval.');refresh();}
   catch(e:any){Alert.alert('Submission failed',e.message);}
  }
+ async function decideProperty(id:number,decision:'approved'|'rejected'){try{await api(`/properties/${id}/decision`,{method:'PATCH',body:JSON.stringify({decision})});refresh();}catch(e:any){Alert.alert('Error',e.message);}}
+ async function updateRooms(p:Property){Alert.prompt?.('Available rooms','Enter the current available room count',async(v)=>{try{await api(`/properties/${p.id}/rooms`,{method:'PATCH',body:JSON.stringify({available_rooms:Number(v)})});refresh();}catch(e:any){Alert.alert('Error',e.message);}},'plain-text',String(p.available_rooms));}
+ async function book(){if(!selected)return;try{await api('/bookings',{method:'POST',body:JSON.stringify({property_id:selected.id,rooms:Number(rooms),move_in_date:moveDate,message})});setModal('none');Alert.alert('Request sent','The owner will review your booking request.');refresh();}catch(e:any){Alert.alert('Booking failed',e.message);}}
+ async function decideBooking(id:number,decision:'confirmed'|'rejected'){try{await api(`/bookings/${id}/decision`,{method:'PATCH',body:JSON.stringify({decision})});refresh();}catch(e:any){Alert.alert('Error',e.message);}}
+ async function cancelBooking(id:number){try{await api(`/bookings/${id}/cancel`,{method:'PATCH'});refresh();}catch(e:any){Alert.alert('Error',e.message);}}
+ async function submitReview(){if(!reviewBooking)return;try{await api('/reviews',{method:'POST',body:JSON.stringify({booking_id:reviewBooking.id,rating:Number(rating),comment:reviewText})});setModal('none');setReviewBooking(null);setReviewText('');Alert.alert('Thank you','Your review has been submitted.');refresh();}catch(e:any){Alert.alert('Review unavailable',e.message);}}
+ async function favorite(p:Property){try{await api(`/properties/${p.id}/favorite`,{method:'POST'});Alert.alert('Favorites','Your favorites have been updated.');}catch(e:any){Alert.alert('Error',e.message);}}
+ async function saveProfile(){try{const r=await api<{user:User}>('/me',{method:'PATCH',body:JSON.stringify({name:profileName,phone:profilePhone})});setUser(r.user);setModal('none');}catch(e:any){Alert.alert('Error',e.message);}}
 }
