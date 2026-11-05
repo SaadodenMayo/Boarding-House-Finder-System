@@ -59,3 +59,10 @@ CREATE TABLE IF NOT EXISTS notifications (
  created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
     `);
+
+const admin = db.prepare("SELECT id FROM users WHERE email=?").get('admin@dormfinder.local');
+if (!admin) {
+  const hash = bcrypt.hashSync('Admin123!', 10);
+  db.prepare("INSERT INTO users(name,email,phone,password_hash,role) VALUES(?,?,?,?,?)")
+    .run('System Administrator','admin@dormfinder.local','',hash,'admin');
+}
