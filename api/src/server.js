@@ -40,3 +40,10 @@ app.post('/api/auth/register',(req,res)=>{
     res.status(201).json({token,user});
   } catch(e) { res.status(409).json({error:'That email address is already registered.'}); }
 });
+app.post('/api/auth/login',(req,res)=>{
+  const {email,password}=req.body||{};
+  const user=db.prepare('SELECT * FROM users WHERE email=?').get(String(email||'').toLowerCase().trim());
+  if(!user || !bcrypt.compareSync(password||'',user.password_hash)) return res.status(401).json({error:'Incorrect email or password.'});
+  const safe={id:user.id,name:user.name,email:user.email,phone:user.phone,role:user.role};
+  res.json({token:jwt.sign({id:user.id,role:user.role},SECRET,{expiresIn:'7d'}),user:safe});
+});
