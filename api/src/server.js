@@ -126,3 +126,9 @@ app.post('/api/bookings',auth,roles('student'),(req,res)=>{
  notify(p.owner_id,'New booking request',`A student requested ${n} room(s) at ${p.title}.`);
  res.status(201).json({booking:db.prepare('SELECT * FROM bookings WHERE id=?').get(info.lastInsertRowid)});
 });
+app.get('/api/bookings/mine',auth,(req,res)=>{
+ const sql=req.user.role==='owner'
+  ? `SELECT b.*,p.title property_title,p.address,p.monthly_price,u.name student_name FROM bookings b JOIN properties p ON p.id=b.property_id JOIN users u ON u.id=b.student_id WHERE p.owner_id=? ORDER BY b.created_at DESC`
+  : `SELECT b.*,p.title property_title,p.address,p.monthly_price,u.name owner_name FROM bookings b JOIN properties p ON p.id=b.property_id JOIN users u ON u.id=p.owner_id WHERE b.student_id=? ORDER BY b.created_at DESC`;
+ res.json({bookings:db.prepare(sql).all(req.user.id)});
+});
