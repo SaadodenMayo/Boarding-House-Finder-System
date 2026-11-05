@@ -39,4 +39,10 @@ export default function App(){
    if(user?.role==='admin'){const [p,n]=await Promise.all([api<{properties:Property[]}>('/properties/pending'),api<{notifications:Notice[]}>('/notifications')]);setPending(p.properties);setNotices(n.notifications);}
   }catch(e:any){Alert.alert('Unable to refresh',e.message);}
  }
+
+ async function checkReminders(){try{await api('/reminders/check',{method:'GET'});}catch{}}
+ async function signIn(){
+  try{const r=await api<{token:string,user:User}>('/auth/login',{method:'POST',body:JSON.stringify({email,password})});await saveSession(r.token,r.user);}
+  catch(e:any){Alert.alert('Sign in failed',e.message);}
+ }
 }
