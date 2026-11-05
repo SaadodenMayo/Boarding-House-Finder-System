@@ -73,4 +73,7 @@ export default function App(){
  async function submitReview(){if(!reviewBooking)return;try{await api('/reviews',{method:'POST',body:JSON.stringify({booking_id:reviewBooking.id,rating:Number(rating),comment:reviewText})});setModal('none');setReviewBooking(null);setReviewText('');Alert.alert('Thank you','Your review has been submitted.');refresh();}catch(e:any){Alert.alert('Review unavailable',e.message);}}
  async function favorite(p:Property){try{await api(`/properties/${p.id}/favorite`,{method:'POST'});Alert.alert('Favorites','Your favorites have been updated.');}catch(e:any){Alert.alert('Error',e.message);}}
  async function saveProfile(){try{const r=await api<{user:User}>('/me',{method:'PATCH',body:JSON.stringify({name:profileName,phone:profilePhone})});setUser(r.user);setModal('none');}catch(e:any){Alert.alert('Error',e.message);}}
+ const visible=properties.filter(p=>(filter==='All'||p.type===filter)&&(!query||`${p.title} ${p.address}`.toLowerCase().includes(query.toLowerCase())));
+ const unread=notices.filter(n=>!n.read_at).length;
+
 }
