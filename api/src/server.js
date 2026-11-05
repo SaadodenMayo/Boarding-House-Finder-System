@@ -16,3 +16,4 @@ function auth(req,res,next) {
   try { req.user = jwt.verify(token, SECRET); next(); }
   catch { res.status(401).json({ error:'Please sign in again.' }); }
 }
+const roles = (...allowed) => (req,res,next) => allowed.includes(req.user.role) ? next() : res.status(403).json({error:'Not allowed.'});
