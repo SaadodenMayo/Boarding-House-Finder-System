@@ -29,4 +29,6 @@ export default function App(){
  const [rooms,setRooms]=useState('1'),[moveDate,setMoveDate]=useState(''),[message,setMessage]=useState('');
  const [rating,setRating]=useState('5'),[reviewText,setReviewText]=useState(''),[reviewBooking,setReviewBooking]=useState<Booking|null>(null);
  const [modal,setModal]=useState<'none'|'add'|'book'|'review'|'profile'>('none');
+ useEffect(()=>{(async()=>{try{const raw=await AsyncStorage.getItem('session');if(raw){const v=JSON.parse(raw);setTok(v.token);setToken(v.token);setUser(v.user);}}catch{}finally{setLoading(false);}})();},[]);
+ useEffect(()=>{if(user){refresh();if(user.role==='student')checkReminders();}},[user,tab]);
 }
