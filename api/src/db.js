@@ -10,3 +10,12 @@ fs.mkdirSync(dataDir, { recursive: true });
 export const db = new Database(path.join(dataDir, 'data.sqlite'));
 db.pragma('journal_mode = WAL');
 db.pragma('foreign_keys = ON');
+
+db.exec(`
+    CREATE TABLE IF NOT EXISTS users (
+ id INTEGER PRIMARY KEY AUTOINCREMENT,
+ name TEXT NOT NULL, email TEXT NOT NULL UNIQUE, phone TEXT,
+ password_hash TEXT NOT NULL, role TEXT NOT NULL CHECK(role IN ('admin','owner','student')),
+ created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+    `);
