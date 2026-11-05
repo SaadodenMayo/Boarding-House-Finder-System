@@ -89,3 +89,12 @@ app.get('/api/properties/:id',(req,res)=>{
  if(!p || (p.status!=='approved' && (!req.user || req.user.role!=='admin'))) return res.status(404).json({error:'Property not found.'});
  res.json({property:p,reviews:db.prepare(`SELECT r.*,u.name student_name FROM reviews r JOIN users u ON u.id=r.student_id WHERE r.property_id=? ORDER BY r.created_at DESC`).all(p.id)});
 });
+app.patch('/api/properties/:id/decision',auth,roles('admin'),(req,res)=>{
+ const {decision,reason}=req.body||{};
+ if(!['approved','rejected'].includes(decision)) return res.status(400).json({error:'Invalid decision.'});
+ const p=db.prepare('SELECT * FROM properties WHERE id=?').get(Number(req.params.id));
+ if(!p) return res.status(404).json({error:'Property not found.'});
+ db.prepare('UPDATE properties SET status=?,rejection_reason=? WHERE id=?').run(decision,decision==='rejected'?(reason||'Please review your submission and resubmit.'):null,p.id);
+ notify(p.owner_id,decision==='approved'?'Property approved':'Property needs changes',decision==='approved'?`${p.title} is now visible to students.`:`${p.title}: ${reason||'Please review your submission.'}`);
+ res.json({ok:true});
+});
