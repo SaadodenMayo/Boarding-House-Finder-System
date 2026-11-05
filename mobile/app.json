@@ -1,0 +1,34 @@
+{
+  "expo": {
+    "name": "Dorm Finder",
+    "slug": "dorm-boarding-apartment-finder",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "splash": {
+      "backgroundColor": "#F1E8D8"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "We use your location to show nearby rental properties."
+      }
+    },
+    "android": {
+      "permissions": [
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_FINE_LOCATION",
+        "POST_NOTIFICATIONS"
+      ],
+      "adaptiveIcon": {
+        "backgroundColor": "#F1E8D8"
+      }
+    },
+    "plugins": [
+      "expo-image-picker",
+      "expo-location",
+      "expo-notifications"
+    ]
+  }
+}
