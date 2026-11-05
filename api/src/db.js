@@ -52,4 +52,10 @@ CREATE TABLE IF NOT EXISTS favorites (
  property_id INTEGER NOT NULL REFERENCES properties(id),
  PRIMARY KEY(student_id, property_id)
 );
+CREATE TABLE IF NOT EXISTS notifications (
+ id INTEGER PRIMARY KEY AUTOINCREMENT,
+ user_id INTEGER NOT NULL REFERENCES users(id),
+ title TEXT NOT NULL, body TEXT NOT NULL, read_at TEXT,
+ created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
     `);
