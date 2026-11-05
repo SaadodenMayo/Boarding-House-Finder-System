@@ -29,4 +29,14 @@ CREATE TABLE IF NOT EXISTS properties (
  CHECK(status IN ('pending','approved','rejected')),
  rejection_reason TEXT, created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
+CREATE TABLE IF NOT EXISTS bookings (
+ id INTEGER PRIMARY KEY AUTOINCREMENT,
+ property_id INTEGER NOT NULL REFERENCES properties(id),
+ student_id INTEGER NOT NULL REFERENCES users(id),
+ rooms INTEGER NOT NULL DEFAULT 1,
+ move_in_date TEXT NOT NULL,
+ message TEXT, status TEXT NOT NULL DEFAULT 'pending'
+ CHECK(status IN ('pending','confirmed','rejected','cancelled','completed')),
+ confirmed_at TEXT, created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
     `);
