@@ -18,4 +18,15 @@ db.exec(`
  password_hash TEXT NOT NULL, role TEXT NOT NULL CHECK(role IN ('admin','owner','student')),
  created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
+CREATE TABLE IF NOT EXISTS properties (
+ id INTEGER PRIMARY KEY AUTOINCREMENT,
+ owner_id INTEGER NOT NULL REFERENCES users(id),
+ title TEXT NOT NULL, type TEXT NOT NULL, description TEXT NOT NULL,
+ address TEXT NOT NULL, latitude REAL NOT NULL, longitude REAL NOT NULL,
+ contact_phone TEXT NOT NULL, monthly_price REAL NOT NULL,
+ total_rooms INTEGER NOT NULL, available_rooms INTEGER NOT NULL,
+ image_data TEXT, status TEXT NOT NULL DEFAULT 'pending'
+ CHECK(status IN ('pending','approved','rejected')),
+ rejection_reason TEXT, created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
     `);
