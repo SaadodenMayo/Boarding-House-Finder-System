@@ -19,3 +19,9 @@ function auth(req,res,next) {
 const roles = (...allowed) => (req,res,next) => allowed.includes(req.user.role) ? next() : res.status(403).json({error:'Not allowed.'});
 const notify = (userId,title,body) => db.prepare('INSERT INTO notifications(user_id,title,body) VALUES(?,?,?)').run(userId,title,body);
 const publicProperty = (p) => ({...p, image_data: p.image_data || null});
+
+const propertySelect = `
+SELECT p.*, u.name owner_name,
+ COALESCE((SELECT ROUND(AVG(r.rating),1) FROM reviews r WHERE r.property_id=p.id),0) average_rating,
+ (SELECT COUNT(*) FROM reviews r WHERE r.property_id=p.id) review_count
+FROM properties p JOIN users u ON u.id=p.owner_id`;
