@@ -132,3 +132,17 @@ app.get('/api/bookings/mine',auth,(req,res)=>{
   : `SELECT b.*,p.title property_title,p.address,p.monthly_price,u.name owner_name FROM bookings b JOIN properties p ON p.id=b.property_id JOIN users u ON u.id=p.owner_id WHERE b.student_id=? ORDER BY b.created_at DESC`;
  res.json({bookings:db.prepare(sql).all(req.user.id)});
 });
+app.patch('/api/bookings/:id/decision',auth,roles('owner'),(req,res)=>{
+ const {decision}=req.body||{};
+ if(!['confirmed','rejected'].includes(decision)) return res.status(400).json({error:'Invalid decision.'});
+ const booking=db.prepare(`SELECT b.*,p.owner_id,p.title,p.available_rooms FROM bookings b JOIN properties p ON p.id=b.property_id WHERE b.id=?`).get(Number(req.params.id));
+ if(!booking||booking.owner_id!==req.user.id) return res.status(404).json({error:'Booking not found.'});
+ if(booking.status!=='pending') return res.status(409).json({error:'This booking has already been processed.'});
+ if(decision==='confirmed' && booking.available_rooms<booking.rooms) return res.status(409).json({error:'There are not enough available rooms.'});
+ const tx=db.transaction(()=>{
+  db.prepare('UPDATE bookings SET status=?,confirmed_at=? WHERE id=?').run(decision,decision==='confirmed'?new Date().toISOString():null,booking.id);
+  if(decision==='confirmed') db.prepare('UPDATE properties SET available_rooms=available_rooms-? WHERE id=?').run(booking.rooms,booking.property_id);
+  notify(booking.student_id,decision==='confirmed'?'Booking confirmed':'Booking request declined',`${booking.title}: your booking is ${decision}.`);
+ });
+ tx(); res.json({ok:true});
+});
