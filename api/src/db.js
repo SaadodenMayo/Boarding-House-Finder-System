@@ -47,4 +47,9 @@ CREATE TABLE IF NOT EXISTS reviews (
  rating INTEGER NOT NULL CHECK(rating BETWEEN 1 AND 5),
  comment TEXT, created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
+CREATE TABLE IF NOT EXISTS favorites (
+ student_id INTEGER NOT NULL REFERENCES users(id),
+ property_id INTEGER NOT NULL REFERENCES properties(id),
+ PRIMARY KEY(student_id, property_id)
+);
     `);
