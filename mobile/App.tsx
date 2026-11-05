@@ -25,4 +25,6 @@ export default function App(){
  const [bookings,setBookings]=useState<Booking[]>([]),[notices,setNotices]=useState<Notice[]>([]);
  const [selected,setSelected]=useState<Property|null>(null),[query,setQuery]=useState(''),[filter,setFilter]=useState('All');
  const [photo,setPhoto]=useState<string|null>(null),[form,setForm]=useState<any>({title:'',type:'Boarding House',description:'',address:'',latitude:'10.283',longitude:'125.170',contact_phone:'',monthly_price:'',total_rooms:'1'});
+ const [profileName,setProfileName]=useState(''),[profilePhone,setProfilePhone]=useState('');
+ const [rooms,setRooms]=useState('1'),[moveDate,setMoveDate]=useState(''),[message,setMessage]=useState('');
 }
