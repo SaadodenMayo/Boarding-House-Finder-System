@@ -76,4 +76,12 @@ export default function App(){
  const visible=properties.filter(p=>(filter==='All'||p.type===filter)&&(!query||`${p.title} ${p.address}`.toLowerCase().includes(query.toLowerCase())));
  const unread=notices.filter(n=>!n.read_at).length;
 
+ if(loading)return <View style={s.center}><ActivityIndicator color={C.bronze}/><Text style={s.sub}>Preparing Dorm Finder…</Text></View>;
+ if(!user)return <KeyboardAvoidingView style={s.auth} behavior={Platform.OS==='ios'?'padding':undefined}><StatusBar style="dark"/><View style={s.brandMark}><Text style={{fontSize:34}}>⌂</Text></View><Text style={s.brand}>HOMESTEAD</Text><Text style={s.tagline}>Find a place to feel at home.</Text><View style={s.authCard}><Header title={authMode==='login'?'Welcome back':'Create your account'} sub={authMode==='login'?'Sign in to continue your search':'Join the rental community'}/>
+ {authMode==='register'&&<><Field label="Full name" value={name} onChangeText={setName}/><Field label="Phone number" value={phone} onChangeText={setPhone} keyboardType="phone-pad"/><Text style={s.label}>Register as</Text><View style={s.row}>{(['student','owner'] as Role[]).map(v=><Pressable key={v} onPress={()=>setRole(v)} style={[s.chip,role===v&&s.chipActive]}><Text style={role===v?s.chipTextActive:s.chipText}>{v==='student'?'Student / Tenant':'Property Owner'}</Text></Pressable>)}</View></>}
+ <Field label="Email address" value={email} onChangeText={setEmail} keyboardType="email-address"/><Field label="Password" value={password} onChangeText={setPassword} secureTextEntry/>
+ <Btn title={authMode==='login'?'Sign In':'Create Account'} onPress={authMode==='login'?signIn:signUp}/>
+ <Pressable onPress={()=>setAuthMode(authMode==='login'?'register':'login')}><Text style={s.switch}>{authMode==='login'?"New here? Create an account":"Already registered? Sign in"}</Text></Pressable>
+ {authMode==='login'&&<Text style={s.hint}>Admin demo: admin@dormfinder.local · Admin123!</Text>}
+ </View></KeyboardAvoidingView>;
 }
