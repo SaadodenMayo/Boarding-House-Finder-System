@@ -39,4 +39,12 @@ CREATE TABLE IF NOT EXISTS bookings (
  CHECK(status IN ('pending','confirmed','rejected','cancelled','completed')),
  confirmed_at TEXT, created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
+CREATE TABLE IF NOT EXISTS reviews (
+ id INTEGER PRIMARY KEY AUTOINCREMENT,
+ property_id INTEGER NOT NULL REFERENCES properties(id),
+ booking_id INTEGER NOT NULL UNIQUE REFERENCES bookings(id),
+ student_id INTEGER NOT NULL REFERENCES users(id),
+ rating INTEGER NOT NULL CHECK(rating BETWEEN 1 AND 5),
+ comment TEXT, created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
     `);
