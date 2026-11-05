@@ -171,3 +171,7 @@ app.post('/api/reviews',auth,roles('student'),(req,res)=>{
 app.get('/api/notifications',auth,(req,res)=>{
  res.json({notifications:db.prepare('SELECT * FROM notifications WHERE user_id=? ORDER BY created_at DESC LIMIT 100').all(req.user.id)});
 });
+app.patch('/api/notifications/:id/read',auth,(req,res)=>{
+ db.prepare('UPDATE notifications SET read_at=CURRENT_TIMESTAMP WHERE id=? AND user_id=?').run(Number(req.params.id),req.user.id);
+ res.json({ok:true});
+});
