@@ -67,3 +67,14 @@ app.post('/api/properties',auth,roles('owner'),(req,res)=>{
  notify(1,'New property submission',`A property named "${b.title}" is waiting for approval.`);
  res.status(201).json({property:db.prepare(propertySelect+' WHERE p.id=?').get(info.lastInsertRowid)});
 });
+app.get('/api/properties',(req,res)=>{
+ const {q,type,minPrice,maxPrice}=req.query;
+ let sql=propertySelect+" WHERE p.status='approved'";
+ const args=[];
+ if(q){sql+=' AND (p.title LIKE ? OR p.address LIKE ? OR p.description LIKE ?)';args.push(`%${q}%`,`%${q}%`,`%${q}%`);}
+ if(type){sql+=' AND p.type=?';args.push(type);}
+ if(minPrice){sql+=' AND p.monthly_price>=?';args.push(Number(minPrice));}
+ if(maxPrice){sql+=' AND p.monthly_price<=?';args.push(Number(maxPrice));}
+ sql+=' ORDER BY p.created_at DESC';
+ res.json({properties:db.prepare(sql).all(...args).map(publicProperty)});
+});
