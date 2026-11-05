@@ -146,3 +146,12 @@ app.patch('/api/bookings/:id/decision',auth,roles('owner'),(req,res)=>{
  });
  tx(); res.json({ok:true});
 });
+app.patch('/api/bookings/:id/cancel',auth,roles('student'),(req,res)=>{
+ const b=db.prepare('SELECT * FROM bookings WHERE id=? AND student_id=?').get(Number(req.params.id),req.user.id);
+ if(!b||!['pending','confirmed'].includes(b.status)) return res.status(404).json({error:'Booking cannot be cancelled.'});
+ const tx=db.transaction(()=>{
+  db.prepare("UPDATE bookings SET status='cancelled' WHERE id=?").run(b.id);
+  if(b.status==='confirmed') db.prepare('UPDATE properties SET available_rooms=MIN(total_rooms,available_rooms+?) WHERE id=?').run(b.rooms,b.property_id);
+ });
+ tx(); res.json({ok:true});
+});
