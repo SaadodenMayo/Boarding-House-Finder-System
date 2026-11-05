@@ -106,3 +106,10 @@ app.patch('/api/properties/:id/rooms',auth,roles('owner'),(req,res)=>{
  db.prepare('UPDATE properties SET available_rooms=? WHERE id=?').run(count,p.id);
  res.json({ok:true,available_rooms:count});
 });
+app.post('/api/properties/:id/favorite',auth,roles('student'),(req,res)=>{
+ const id=Number(req.params.id);
+ const exists=db.prepare('SELECT 1 FROM favorites WHERE student_id=? AND property_id=?').get(req.user.id,id);
+ if(exists) db.prepare('DELETE FROM favorites WHERE student_id=? AND property_id=?').run(req.user.id,id);
+ else db.prepare('INSERT OR IGNORE INTO favorites(student_id,property_id) VALUES(?,?)').run(req.user.id,id);
+ res.json({favorite:!exists});
+});
